@@ -1,6 +1,6 @@
 {
     "comercio": "Mi Comercio",
-    "logo": "logo.png",
+    "logo": "/pos/logo.png",
     "usuario": "admin",
     "contrasena": "123"
 }
