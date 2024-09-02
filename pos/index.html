@@ -6,58 +6,76 @@
     <title>Punto de Venta Virtual</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+        @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css');
 
         body {
             font-family: 'Roboto', sans-serif;
-            background-color: #f0f2f5;
+            background-color: #e3f2fd;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
             margin: 0;
             color: #333;
+            overflow: hidden;
         }
         .container {
             background-color: #fff;
             padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            border-radius: 15px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
             text-align: center;
-            max-width: 350px;
+            max-width: 400px;
             width: 100%;
+            transition: transform 0.5s ease-in-out;
         }
         h1 {
-            font-size: 24px;
+            font-size: 28px;
             font-weight: 700;
             margin-bottom: 20px;
-            color: #1e88e5;
+            color: #007bff;
+            position: relative;
         }
-        input[type="password"], input[type="text"], input[type="text"] {
+        h1::after {
+            content: "💳";
+            font-size: 1.5rem;
+            position: absolute;
+            right: -40px;
+            top: 0;
+            animation: rotateEmoji 2s infinite linear;
+        }
+        @keyframes rotateEmoji {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        input[type="password"], input[type="text"] {
             width: 100%;
-            padding: 12px;
+            padding: 14px;
             margin-bottom: 20px;
-            border: 1px solid #ccc;
-            border-radius: 8px;
+            border: 2px solid #ccc;
+            border-radius: 10px;
             font-size: 16px;
             transition: border-color 0.3s;
         }
         input[type="password"]:focus, input[type="text"]:focus {
-            border-color: #1e88e5;
+            border-color: #007bff;
             outline: none;
+            box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
         }
         button {
-            background-color: #1e88e5;
+            background-color: #007bff;
             color: white;
-            padding: 12px 20px;
+            padding: 14px 20px;
             border: none;
-            border-radius: 8px;
+            border-radius: 10px;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 18px;
             width: 100%;
-            transition: background-color 0.3s;
+            transition: background-color 0.3s, transform 0.3s;
         }
         button:hover {
-            background-color: #1565c0;
+            background-color: #0056b3;
+            transform: scale(1.05);
         }
         #logo {
             margin-top: 20px;
@@ -65,52 +83,71 @@
             border-radius: 50%;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         }
-        .history {
+        #history {
+            background-color: #f1f1f1;
+            border-radius: 10px;
+            padding: 15px;
             margin-top: 20px;
-            max-height: 150px;
-            overflow-y: auto;
             text-align: left;
+            font-size: 14px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        #history h2 {
+            font-size: 18px;
+            margin-bottom: 10px;
         }
         .transaction {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
         .transaction .amount {
-            font-weight: 500;
-            color: #1e88e5;
+            color: #28a745;
+            font-weight: bold;
         }
         .transaction .status {
-            font-weight: 500;
-            color: #333;
+            font-style: italic;
+            color: #555;
         }
-        .export-btn {
-            margin-top: 20px;
-            background-color: #4caf50;
-            color: white;
-            padding: 10px 15px;
-            border: none;
-            border-radius: 8px;
+        #logout {
+            margin-top: 10px;
+            display: block;
+            text-align: center;
+            font-size: 14px;
+            color: #dc3545;
             cursor: pointer;
-            font-size: 16px;
-            width: 100%;
-            transition: background-color 0.3s;
+            text-decoration: underline;
         }
-        .export-btn:hover {
-            background-color: #388e3c;
+        #remember-container {
+            display: flex;
+            align-items: center;
+            justify-content: start;
+            margin-bottom: 20px;
+        }
+        #remember-container input[type="checkbox"] {
+            margin-right: 10px;
+        }
+        #export-pdf {
+            background-color: #28a745;
+            margin-top: 10px;
+        }
+        #export-pdf:hover {
+            background-color: #218838;
         }
     </style>
 </head>
 <body>
     <div class="container" id="login-container">
         <img id="logo" src="/pos/logo.png" alt="Logo">
-        <br>
-        <br>
         <h1>Iniciar Sesión</h1>
         <form id="login-form">
             <input type="text" id="username" placeholder="Usuario" required>
             <input type="password" id="password" placeholder="Contraseña" required>
-            <label><input type="checkbox" id="rememberMe"> Recordar usuario</label>
+            <div id="remember-container">
+                <input type="checkbox" id="remember-me">
+                <label for="remember-me">Recordar Usuario</label>
+            </div>
             <button type="submit">Ingresar</button>
         </form>
     </div>
@@ -122,16 +159,17 @@
             <input type="text" id="amount" placeholder="Ingresa el monto (e.g., 10,50)" required>
             <button type="submit">Pagar</button>
         </form>
-        <div id="bpay-container"></div>
         <div id="history">
-            <h2>Historial de Movimientos</h2>
+            <h2>Historial de Transacciones</h2>
             <div id="transaction-list"></div>
+            <button id="export-pdf">Exportar a PDF</button>
         </div>
-        <button class="export-btn" id="export-btn">Exportar Historial a PDF</button>
-        <button class="export-btn" id="logout">Volver a Iniciar Sesión</button>
+        <div id="bpay-container"></div>
+        <span id="logout">Volver a Iniciar Sesión</span>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.6.0/jspdf.umd.min.js"></script>
+    <script src="https://pos.cromstudio.com.ve/sdk.js"></script>
     <script>
         async function cargarDatos() {
             try {
@@ -144,22 +182,34 @@
             }
         }
 
+        document.addEventListener("DOMContentLoaded", function() {
+            const rememberedUsername = localStorage.getItem("rememberedUsername");
+            if (rememberedUsername) {
+                document.getElementById("username").value = rememberedUsername;
+                document.getElementById("remember-me").checked = true;
+            }
+        });
+
         document.getElementById("login-form").addEventListener("submit", async function(event) {
             event.preventDefault();
 
             const datosComercio = await cargarDatos();
             const usuarioIngresado = document.getElementById("username").value;
             const contrasenaIngresada = document.getElementById("password").value;
-            const recordarUsuario = document.getElementById("rememberMe").checked;
+            const rememberMeChecked = document.getElementById("remember-me").checked;
 
             if (usuarioIngresado === datosComercio.usuario && contrasenaIngresada === datosComercio.contrasena) {
-                if (recordarUsuario) {
-                    localStorage.setItem("rememberedUser", usuarioIngresado);
+                if (rememberMeChecked) {
+                    localStorage.setItem("rememberedUsername", usuarioIngresado);
                 } else {
-                    localStorage.removeItem("rememberedUser");
+                    localStorage.removeItem("rememberedUsername");
                 }
-                document.getElementById("login-container").style.display = "none";
-                document.getElementById("pos-container").style.display = "block";
+                document.getElementById("login-container").style.transform = "translateX(-100%)";
+                setTimeout(() => {
+                    document.getElementById("login-container").style.display = "none";
+                    document.getElementById("pos-container").style.display = "block";
+                    document.getElementById("pos-container").style.transform = "translateX(0)";
+                }, 500);
                 document.getElementById("nombre-comercio").textContent = datosComercio.comercio;
                 document.getElementById("logo").src = datosComercio.logo;
             } else {
@@ -178,60 +228,96 @@
                 return;
             }
 
-            const bpayKey = "TU_BPAY_KEY"; 
-            const reference = `REF-${Date.now()}`; 
+            const bpayKey = "TU_BPAY_KEY";
+            const reference = `REF-${Date.now()}`;
 
-            const config = {
-                clientId: bpayKey,
-                amount: parseFloat(amount),
-                ref: reference,
-                onConnected: (res) => console.log("Conexión establecida:", res),
-                onSuccess: async (res) => {
-                    alert("Pago exitoso. Detalles: " + JSON.stringify(res));
-                    const instrId = res.data.InstrId;
-                    const nbDbtr = res.data.NbDbtr;
-                    const e2e = res.data.E2E;
-                    const descripcion = `InstrId: ${instrId}, NbDbtr: ${nbDbtr}, E2E: ${e2e}`;
-                    const payload = {
-                        amount: parseFloat(amount),
-                        description: descripcion,
-                        currency: "unit",
-                        subject: "USUARIO",
-                        type: "debit.toUser"
-                    };
+            if (amount) {
+                const config = {
+                    clientId: bpayKey,
+                    amount: parseFloat(amount),
+                    ref: reference,
+                    onConnected: (res) => {
+                        console.log("Conexión establecida:", res);
+                    },
+                    onSuccess: async (res) => {
+                        alert("Pago exitoso. Detalles: " + JSON.stringify(res));
 
-                    try {
-                        const apiResponse = await fetch('http://apisms.cromstudio.com.ve:2053/api/payments', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                            },
-                            body: JSON.stringify(payload)
-                        });
+                        const instrId = res.data.InstrId;
+                        const nbDbtr = res.data.NbDbtr;
+                        const e2e = res.data.E2E;
 
-                        const responseData = await apiResponse.json();
-                        console.log("Respuesta de la API:", responseData);
-                        agregarTransaccionAlHistorial(amount, 'Éxito');
-                    } catch (error) {
-                        console.error("Error al enviar datos a la API:", error);
+                        const descripcion = `InstrId: ${instrId}, NbDbtr: ${nbDbtr}, E2E: ${e2e}`;
+                        
+                        const payload = {
+                            amount: parseFloat(amount),
+                            description: descripcion,
+                            currency: "unit",
+                            subject: "USUARIO",
+                            type: "debit.toUser"
+                        };
+
+                        try {
+                            const apiResponse = await fetch('http://apisms.cromstudio.com.ve:2053/api/payments', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify(payload)
+                            });
+
+                            const responseData = await apiResponse.json();
+                            console.log("Respuesta de la API:", responseData);
+                            agregarTransaccionAlHistorial(amount, 'Éxito');
+                        } catch (error) {
+                            console.error("Error al enviar datos a la API:", error);
+                            agregarTransaccionAlHistorial(amount, 'Error');
+                        }
+                    },
+                    onReject: (res) => {
+                        alert("Pago rechazado. Detalles: " + JSON.stringify(res));
+                        agregarTransaccionAlHistorial(amount, 'Rechazado');
+                    },
+                    onError: (res) => {
+                        alert("Error en la transacción. Detalles: " + JSON.stringify(res));
                         agregarTransaccionAlHistorial(amount, 'Error');
-                    }
-                },
-                onReject: (res) => {
-                    alert("Pago rechazado. Detalles: " + JSON.stringify(res));
-                    agregarTransaccionAlHistorial(amount, 'Rechazado');
-                },
-                onError: (res) => {
-                    alert("Error en la transacción. Detalles: " + JSON.stringify(res));
-                    agregarTransaccionAlHistorial(amount, 'Error');
-                },
-            };
+                    },
+                };
 
-            if (typeof bpay !== "undefined") {
-                bpay(config).render("bpay-container");
+                if (typeof bpay !== "undefined") {
+                    bpay(config).render("bpay-container");
+                } else {
+                    alert("El SDK de BPAY no se ha cargado correctamente.");
+                }
             } else {
-                alert("El SDK de BPAY no se ha cargado correctamente.");
+                alert("Por favor, ingresa un monto válido.");
             }
+        });
+
+        document.getElementById("logout").addEventListener("click", function() {
+            document.getElementById("pos-container").style.transform = "translateX(100%)";
+            setTimeout(() => {
+                document.getElementById("pos-container").style.display = "none";
+                document.getElementById("login-container").style.display = "block";
+                document.getElementById("login-container").style.transform = "translateX(0)";
+            }, 500);
+        });
+
+        document.getElementById("export-pdf").addEventListener("click", function() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            doc.text("Historial de Transacciones", 10, 10);
+            
+            let y = 20;
+            const transactions = document.querySelectorAll(".transaction");
+            transactions.forEach((transaction) => {
+                const amount = transaction.querySelector(".amount").textContent;
+                const status = transaction.querySelector(".status").textContent;
+                doc.text(`${amount} - ${status}`, 10, y);
+                y += 10;
+            });
+            
+            doc.save("historial_transacciones.pdf");
         });
 
         function agregarTransaccionAlHistorial(amount, status) {
@@ -241,38 +327,6 @@
             transactionElement.innerHTML = `<span class="amount">$${parseFloat(amount).toFixed(2)}</span> <span class="status">${status}</span>`;
             transactionList.appendChild(transactionElement);
         }
-
-        document.getElementById("export-btn").addEventListener("click", function() {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-            doc.setFontSize(18);
-            doc.text("Historial de Movimientos", 10, 10);
-            let yPosition = 20;
-
-            const transactions = document.querySelectorAll("#transaction-list .transaction");
-            transactions.forEach((transaction) => {
-                const amount = transaction.querySelector(".amount").textContent;
-                const status = transaction.querySelector(".status").textContent;
-                doc.text(`${amount} - ${status}`, 10, yPosition);
-                yPosition += 10;
-            });
-
-            doc.save("historial_movimientos.pdf");
-        });
-
-        document.getElementById("logout").addEventListener("click", function() {
-            document.getElementById("login-container").style.display = "block";
-            document.getElementById("pos-container").style.display = "none";
-        });
-
-        // Recuperar el usuario recordado al cargar la página
-        window.onload = function() {
-            const rememberedUser = localStorage.getItem("rememberedUser");
-            if (rememberedUser) {
-                document.getElementById("username").value = rememberedUser;
-                document.getElementById("rememberMe").checked = true;
-            }
-        };
     </script>
 </body>
 </html>
