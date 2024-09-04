@@ -130,7 +130,7 @@ if (amount) {
                 amount: parseFloat(amount),
                 description: descripcion,
                 currency: "unit",
-                subject: "USUARIO",
+                subject: "cromstudio21",
                 type: "debit.toUser"
             };
 
