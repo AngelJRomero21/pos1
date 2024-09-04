@@ -303,8 +303,8 @@
         });
 
         document.getElementById("export-pdf").addEventListener("click", function() {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
+            // Usa el constructor jsPDF directamente desde window
+            const doc = new window.jspdf.jsPDF();
             
             doc.text("Historial de Transacciones", 10, 10);
             
